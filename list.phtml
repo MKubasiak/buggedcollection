@@ -1,0 +1,14 @@
+<?php
+    $_category = Mage::registry('current_category');
+    $allCatIds = explode(",", $_category->getAllChildren());
+    $_productCollection = Mage::getModel('catalog/product')->getCollection();
+    $_productCollection->getSelect()->group('entity_id');
+    $_productCollection
+        ->joinField('category_id', 'catalog/category_product', 'category_id', 'product_id=entity_id', null, 'left')
+        ->addAttributeToSelect('*')
+        ->addAttributeToSort('etiquette', 'asc')
+        ->addAttributeToFilter('status',1)
+        ->addAttributeToFilter('category_id', array('in' => $allCatIds));
+
+
+    $_productCollection->setPageSize(8);
